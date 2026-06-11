@@ -1,13 +1,19 @@
 # Win-VMS-report
 This script identifies network performance degradation in Azure Windows VMs (high latency, connection drops/errors)
 
+For True End-to-End Latency & Packet Loss
+The script above uses available Azure metrics. If you need true latency and packet loss detection, enable:
 
-Important Notes for Production Use
+Azure Monitor Network Insights (preview)
 
-Requirement	                                                   Implementation
+Network Watcher Connection Monitor (ICMP/TCP latency)
 
-Azure subscription connection	                                 Connect-AzAccount + Set-AzContext
-Network performance metrics                              	     Uses Network In/Out Total (since raw latency requires Azure Monitor + Network Watcher)
-Connection drops/errors	                                       Detected via metric data gaps (missing telemetry = possible drops)
-CSV export	                                                   Exports exactly: VMName, IPAddress, AverageLatency, ConnectionStatus, Timestamp
-Windows VMs only	                                             Filters OsType -eq "Windows" + PowerState VM running
+Diagnostic settings → Send to Log Analytics workspace
+
+Then query AzureMetrics table for:
+
+Avg of NetworkWatcher_ConnectionMonitor_LatencyMs
+
+Total for NetworkWatcher_ConnectionMonitor_ProbeFailedPercent
+
+
